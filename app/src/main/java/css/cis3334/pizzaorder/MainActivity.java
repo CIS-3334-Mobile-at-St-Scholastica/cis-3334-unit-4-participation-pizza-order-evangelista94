@@ -36,31 +36,53 @@ public class MainActivity extends AppCompatActivity implements updateViewInterfa
         txtTotal = (TextView) findViewById(R.id.textViewTotal);
         txtStatus = (TextView) findViewById(R.id.textViewStatus);
 
-        pizzaOrderSystem = new PizzaOrder(this);
         spinnerToppings = (Spinner) findViewById(R.id.spinnerToppings);
+
+        pizzaOrderSystem = new PizzaOrder(this);
+
     }
 
     @Override
     public void updateView(String orderStatus) {
+
         txtStatus.setText("Order Status" + orderStatus);
     }
 
     public void onClickOrder(View view) {
-        String topping = spinnerToppings.getSelectedItem().toString();
-        String size = "large";
+        pizzaOrderSystem.setDelivery(chkbxDelivery.isChecked());
+        String topping = "";
+        String size = "";
+        boolean extraCheese = false;
+        //String topping = spinnerToppings.getSelectedItem().toString();
 
-        if (rbSmall.isChecked()){
-            size =  "small";
+
+        if (rbSmall.isChecked()) {
+            size = "small";
         }
-        if (rbMedium.isChecked()){
-            size =  "medium";
+        if (rbMedium.isChecked()) {
+            size = "medium";
+        }
+        if (rbLarge.isChecked()) {
+            size = "large";
+        }
+
+        topping = spinnerToppings.getSelectedItem().toString();
+
+        if (chkbxCheese.isChecked()) {
+            extraCheese = true;
+        }
+
+        String orderDescription = pizzaOrderSystem.OrderPizza(topping, size, extraCheese);
+
+        if (chkbxDelivery.isChecked()) {
+            orderDescription += " for delivery.";
+        } else {
+            orderDescription += " for pickup.";
         }
 
 
-
-        String orderDescription = pizzaOrderSystem.OrderPizza("Pepperoni","Large", false);
         //display a pop up message for a long period of time
-        Toast.makeText(getApplicationContext(), "You have ordered a "+orderDescription , Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "You have ordered a " + orderDescription, Toast.LENGTH_LONG).show();
         txtTotal.setText("Total Due: " + pizzaOrderSystem.getTotalBill().toString());
     }
 }
